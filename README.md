@@ -1,5 +1,6 @@
 # ef-core-relation-demo
 ## 1. One-To-One
+**User** have one **Profile** and a **Profile** must have one **User**
 ### Models
 ``` csharp
 public class User
@@ -48,7 +49,7 @@ public class Profile
     "name": "Azrag-Dog",
     "profile": {
       "id": 2,
-      "bio": "A saluki dog, broww color.",
+      "bio": "A saluki dog, brown color.",
       "userId": 1,
       "user": null
     }
@@ -58,7 +59,7 @@ public class Profile
     "name": "Basma-Dog",
     "profile": {
       "id": 1,
-      "bio": "A Saluki dog, brow color.",
+      "bio": "A Saluki dog, brown color.",
       "userId": 2,
       "user": null
     }
@@ -73,7 +74,7 @@ public class Profile
     "name": "Azrag-Dog",
     "profile": {
       "id": 2,
-      "bio": "A saluki dog, broww color.",
+      "bio": "A saluki dog, brown color.",
       "userId": 1,
       "user": null
     }
@@ -83,9 +84,218 @@ public class Profile
     "name": "Basma-Dog",
     "profile": {
       "id": 1,
-      "bio": "A Saluki dog, brow color.",
+      "bio": "A Saluki dog, brown color.",
       "userId": 2,
       "user": null
+    }
+  }
+]
+```
+
+## 2. One-To-Many
+One **Blog** have many **Post**s and many **Post**s have one **Blog**
+### Models
+``` csharp
+public class Blog
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = null!;
+
+    public ICollection<Post>? Posts { get; set; }
+}
+
+public class Post
+{
+    public int Id { get; set; }
+    public string Content { get; set; } = null!;
+
+    public int BlogId { get; set; }
+    public Blog? Blog { get; set; }
+}
+```
+### Add Blog Method 1
+``` json
+{
+  "title": "Blog-1"
+}
+```
+### Add Blog Method 2 (with Posts)
+``` json
+{
+  "title": "Blog-2",
+  "posts": [
+    {
+      "content": "This is Blog-2 content-1"
+    },
+    {
+      "content": "This is blog-2 content-2"
+    }
+  ]
+}
+```
+### Add Post Method
+``` json
+{
+  "content": "This is Blog-1 content.",
+  "blogId": 1
+}
+```
+### Get Blogs
+``` json
+[
+  {
+    "id": 1,
+    "title": "Blog-1",
+    "posts": [
+      {
+        "id": 1,
+        "content": "This is Blog-1 content.",
+        "blogId": 1,
+        "blog": null
+      },
+      {
+        "id": 2,
+        "content": "This is Blog-1 content-2.",
+        "blogId": 1,
+        "blog": null
+      },
+      {
+        "id": 3,
+        "content": "This is Blog-1 content-3.",
+        "blogId": 1,
+        "blog": null
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Blog-2",
+    "posts": [
+      {
+        "id": 4,
+        "content": "This is Blog-2 content-1",
+        "blogId": 2,
+        "blog": null
+      },
+      {
+        "id": 5,
+        "content": "This is blog-2 content-2",
+        "blogId": 2,
+        "blog": null
+      }
+    ]
+  }
+]
+```
+### Get Posts
+``` json
+[
+  {
+    "id": 1,
+    "content": "This is Blog-1 content.",
+    "blogId": 1,
+    "blog": {
+      "id": 1,
+      "title": "Blog-1",
+      "posts": [
+        null,
+        {
+          "id": 2,
+          "content": "This is Blog-1 content-2.",
+          "blogId": 1,
+          "blog": null
+        },
+        {
+          "id": 3,
+          "content": "This is Blog-1 content-3.",
+          "blogId": 1,
+          "blog": null
+        }
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "content": "This is Blog-1 content-2.",
+    "blogId": 1,
+    "blog": {
+      "id": 1,
+      "title": "Blog-1",
+      "posts": [
+        {
+          "id": 1,
+          "content": "This is Blog-1 content.",
+          "blogId": 1,
+          "blog": null
+        },
+        null,
+        {
+          "id": 3,
+          "content": "This is Blog-1 content-3.",
+          "blogId": 1,
+          "blog": null
+        }
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "content": "This is Blog-1 content-3.",
+    "blogId": 1,
+    "blog": {
+      "id": 1,
+      "title": "Blog-1",
+      "posts": [
+        {
+          "id": 1,
+          "content": "This is Blog-1 content.",
+          "blogId": 1,
+          "blog": null
+        },
+        {
+          "id": 2,
+          "content": "This is Blog-1 content-2.",
+          "blogId": 1,
+          "blog": null
+        },
+        null
+      ]
+    }
+  },
+  {
+    "id": 4,
+    "content": "This is Blog-2 content-1",
+    "blogId": 2,
+    "blog": {
+      "id": 2,
+      "title": "Blog-2",
+      "posts": [
+        null,
+        {
+          "id": 5,
+          "content": "This is blog-2 content-2",
+          "blogId": 2,
+          "blog": null
+        }
+      ]
+    }
+  },
+  {
+    "id": 5,
+    "content": "This is blog-2 content-2",
+    "blogId": 2,
+    "blog": {
+      "id": 2,
+      "title": "Blog-2",
+      "posts": [
+        {
+          "id": 4,
+          "content": "This is Blog-2 content-1",
+          "blogId": 2,
+          "blog": null
+        },
+        null
+      ]
     }
   }
 ]
