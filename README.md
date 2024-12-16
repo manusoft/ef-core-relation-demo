@@ -638,3 +638,188 @@ Table structure for the provided classes, based on a relational database schema:
   }
 ]
 ```
+# Relationships
+Here’s the explanation of the relationships along with **models** and **table structures** for each type:
+
+---
+
+### **1. One-to-One Relationship**
+#### Example: `User` and `Profile`
+
+#### Models
+```csharp
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public Profile? Profile { get; set; }
+}
+
+public class Profile
+{
+    public int Id { get; set; }
+    public string Bio { get; set; } = null!;
+    public int UserId { get; set; }
+    public User? User { get; set; }
+}
+```
+
+#### Table Structure
+**Table: `Users`**
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the user.  |
+| `Name`          | `string`      | `NO`         | Name of the user.          |
+
+**Table: `Profiles`**
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the profile. |
+| `Bio`           | `string`      | `NO`         | Biography of the user.     |
+| `UserId`        | `int`         | `NO`         | Foreign key referencing `Users.Id`. |
+
+---
+
+### **2. One-to-Many Relationship**
+#### Example: `Blog` and `Post`
+
+#### Models
+```csharp
+public class Blog
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = null!;
+    public ICollection<Post>? Posts { get; set; }
+}
+
+public class Post
+{
+    public int Id { get; set; }
+    public string Content { get; set; } = null!;
+    public int BlogId { get; set; }
+    public Blog? Blog { get; set; }
+}
+```
+
+#### Table Structure
+**Table: `Blogs`**
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the blog.  |
+| `Title`         | `string`      | `NO`         | Title of the blog.         |
+
+**Table: `Posts`**
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the post.  |
+| `Content`       | `string`      | `NO`         | Content of the post.       |
+| `BlogId`        | `int`         | `NO`         | Foreign key referencing `Blogs.Id`. |
+
+---
+
+### **3. Self-Referential Relationship**
+#### Example: `Employee` with Manager
+
+#### Models
+```csharp
+public class Employee
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public int? ManagerId { get; set; }
+    public Employee? Manager { get; set; }
+    public ICollection<Employee>? Subordinates { get; set; }
+}
+```
+
+#### Table Structure
+**Table: `Employees`**
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the employee. |
+| `Name`          | `string`      | `NO`         | Name of the employee.      |
+| `ManagerId`     | `int`         | `YES`        | Foreign key referencing `Employees.Id`. |
+
+---
+
+### **4. Polymorphic Relationship**
+#### Example: `Comment` can belong to multiple entities (`Post`, `Photo`)
+
+#### Models
+```csharp
+public class Comment
+{
+    public int Id { get; set; }
+    public string Content { get; set; } = null!;
+    public int ParentId { get; set; }
+    public string ParentType { get; set; } = null!; // Example: "Post", "Photo"
+}
+```
+
+#### Table Structure
+**Table: `Comments`**
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the comment. |
+| `Content`       | `string`      | `NO`         | Content of the comment.    |
+| `ParentId`      | `int`         | `NO`         | Foreign key referencing the parent entity. |
+| `ParentType`    | `string`      | `NO`         | Indicates the parent entity type (e.g., `Post` or `Photo`). |
+
+---
+
+### **5. Many-to-Many with Extra Attributes**
+#### Example: `Student` enrolls in `Course` with additional attributes like `EnrollmentDate`
+
+#### Models
+```csharp
+public class Student
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public ICollection<StudentCourse>? StudentCourses { get; set; }
+}
+
+public class Course
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public ICollection<StudentCourse>? StudentCourses { get; set; }
+}
+
+public class StudentCourse
+{
+    public int Id { get; set; }
+    public int StudentId { get; set; }
+    public Student? Student { get; set; }
+    public int CourseId { get; set; }
+    public Course? Course { get; set; }
+    public DateTime EnrollmentDate { get; set; }
+    public string Grade { get; set; } = null!;
+}
+```
+
+#### Table Structure
+**Table: `Students`**
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the student. |
+| `Name`          | `string`      | `NO`         | Name of the student.        |
+
+**Table: `Courses`**
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the course. |
+| `Name`          | `string`      | `NO`         | Name of the course.         |
+
+**Table: `StudentCourses`**
+| **Column Name**      | **Data Type** | **Nullable** | **Description**                |
+|-----------------------|---------------|--------------|--------------------------------|
+| `Id`                 | `int`         | `NO`         | Primary key for the record.    |
+| `StudentId`          | `int`         | `NO`         | Foreign key referencing `Students.Id`. |
+| `CourseId`           | `int`         | `NO`         | Foreign key referencing `Courses.Id`.  |
+| `EnrollmentDate`     | `datetime`    | `NO`         | Date of enrollment.            |
+| `Grade`              | `string`      | `NO`         | Grade achieved in the course.  |
+
+---
+
+These examples show how different types of relationships can be modeled and structured in databases. Let me know if you need additional assistance! 😊
