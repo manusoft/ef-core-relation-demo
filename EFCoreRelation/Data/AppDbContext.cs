@@ -12,4 +12,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     // One To Many
     public DbSet<Blog> Blogs => Set<Blog>();
     public DbSet<Post> Posts => Set<Post>();
+
+    // Many To Many
+    public DbSet<Student> Students => Set<Student>();
+    public DbSet<Course> Courses => Set<Course>();
+    public DbSet<StudentCourse> StudentsCourses => Set<StudentCourse>();
 }
