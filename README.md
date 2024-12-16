@@ -1,6 +1,5 @@
 # ef-core-relation-demo
 ## 1. One-To-One
-**User** have one **Profile** and a **Profile** must have one **User**
 ### Models
 ``` csharp
 public class User
@@ -19,6 +18,28 @@ public class Profile
     public User? User { get; set; }
 }
 ```
+Table structure for the provided classes, based on a relational database schema:
+
+### Table: `Users`
+| **Column Name** | **Data Type** | **Nullable** | **Description**          |
+|------------------|---------------|--------------|--------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the user.|
+| `Name`          | `string`      | `NO`         | Name of the user.        |
+
+### Table: `Profiles`
+| **Column Name** | **Data Type** | **Nullable** | **Description**          |
+|------------------|---------------|--------------|--------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the profile.|
+| `Bio`           | `string`      | `NO`         | Biography of the user.   |
+| `UserId`        | `int`         | `NO`         | Foreign key referencing `Users.Id`.|
+
+### Relationships
+1. **One-to-One Relationship**:  
+   - A `User` can have one `Profile`.
+   - A `Profile` must reference one `User` via `UserId`.
+2. **Foreign Key Constraint**:
+   - `Profiles.UserId` is a foreign key referencing `Users.Id`.
+
 ### Add User Method 1
 ``` json
 {
@@ -93,7 +114,6 @@ public class Profile
 ```
 
 ## 2. One-To-Many
-One **Blog** have many **Post**s and many **Post**s have one **Blog**
 ### Models
 ``` csharp
 public class Blog
@@ -113,6 +133,28 @@ public class Post
     public Blog? Blog { get; set; }
 }
 ```
+Table structure for the provided classes, based on a relational database schema:
+
+### Table: `Blogs`
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the blog.  |
+| `Title`         | `string`      | `NO`         | Title of the blog.         |
+
+### Table: `Posts`
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the post.  |
+| `Content`       | `string`      | `NO`         | Content of the post.       |
+| `BlogId`        | `int`         | `NO`         | Foreign key referencing `Blogs.Id`. |
+
+### Relationships
+1. **One-to-Many Relationship**:
+   - A `Blog` can have multiple `Posts`.
+   - A `Post` belongs to one `Blog` via `BlogId`.
+2. **Foreign Key Constraint**:
+   - `Posts.BlogId` is a foreign key referencing `Blogs.Id`.
+
 ### Add Blog Method 1
 ``` json
 {
