@@ -1,4 +1,4 @@
-# ef-core-relation-demo
+# EF-Core-Relationships-Demo
 ## 1. One-To-One
 ### Models
 ``` csharp
@@ -43,22 +43,22 @@ Table structure for the provided classes, based on a relational database schema:
 ### Add User Method 1
 ``` json
 {
-  "name": "Azrag-Dog"
+  "name": "John Wick"
 }
 ```
 ### Add User Method 2 (with Profile)
 ``` json
 {
-  "name": "Basma-Dog",
+  "name": "James Bond",
   "profile": {
-    "bio": "A saluki dog, brown color."    
+    "bio": "An intelligent agent of England."    
   }
 }
 ```
-### Add Profile Method
+### Add Profile
 ``` json
 {
-  "bio": "A saluki dog, brown color.",
+  "bio": "A danagerous man in America.",
   "userid": 1
 }
 ```
@@ -67,20 +67,20 @@ Table structure for the provided classes, based on a relational database schema:
 [
   {
     "id": 1,
-    "name": "Azrag-Dog",
+    "name": "John Wick",
     "profile": {
       "id": 2,
-      "bio": "A saluki dog, brown color.",
+      "bio": "A danagerous man in America.",
       "userId": 1,
       "user": null
     }
   },
   {
     "id": 2,
-    "name": "Basma-Dog",
+    "name": "James Bond",
     "profile": {
       "id": 1,
-      "bio": "A Saluki dog, brown color.",
+      "bio": "An intelligent agent of England.",
       "userId": 2,
       "user": null
     }
@@ -92,20 +92,20 @@ Table structure for the provided classes, based on a relational database schema:
 [
   {
     "id": 1,
-    "name": "Azrag-Dog",
+    "name": "John Wick",
     "profile": {
       "id": 2,
-      "bio": "A saluki dog, brown color.",
+      "bio": "A danagerous man in America.",
       "userId": 1,
       "user": null
     }
   },
   {
     "id": 2,
-    "name": "Basma-Dog",
+    "name": "James Bond",
     "profile": {
       "id": 1,
-      "bio": "A Saluki dog, brown color.",
+      "bio": "An intelligent agent of England.",
       "userId": 2,
       "user": null
     }
@@ -175,7 +175,7 @@ Table structure for the provided classes, based on a relational database schema:
   ]
 }
 ```
-### Add Post Method
+### Add Post
 ``` json
 {
   "content": "This is Blog-1 content.",
@@ -343,3 +343,298 @@ Table structure for the provided classes, based on a relational database schema:
 ]
 ```
 
+## 3. Many-To-Many
+### Models
+``` csharp
+public class Student
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+
+    public ICollection<StudentCourse>? StudentsCourses { get; set; }
+}
+
+public class Course
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+
+    public ICollection<StudentCourse>? StudentsCourses { get; set; }
+}
+
+public class StudentCourse
+{
+    public int Id { get; set; }
+
+    public int StudentId { get; set; }
+    public Student? Student { get; set; }
+
+    public int CourseId { get;set; }
+    public Course? Course { get; set; }
+}
+```
+Table structure for the provided classes, based on a relational database schema:
+
+### Table: `Students`
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the student. |
+| `Name`          | `string`      | `NO`         | Name of the student.        |
+
+### Table: `Courses`
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the course. |
+| `Name`          | `string`      | `NO`         | Name of the course.         |
+
+### Table: `StudentCourses`
+| **Column Name** | **Data Type** | **Nullable** | **Description**            |
+|------------------|---------------|--------------|----------------------------|
+| `Id`            | `int`         | `NO`         | Primary key for the Student-Course relation. |
+| `StudentId`     | `int`         | `NO`         | Foreign key referencing `Students.Id`. |
+| `CourseId`      | `int`         | `NO`         | Foreign key referencing `Courses.Id`.  |
+
+### Relationships
+1. **Many-to-Many Relationship**:
+   - A `Student` can enroll in multiple `Courses`.
+   - A `Course` can have multiple `Students` enrolled.
+   - This relationship is implemented through the `StudentCourses` join table.
+2. **Foreign Key Constraints**:
+   - `StudentCourses.StudentId` is a foreign key referencing `Students.Id`.
+   - `StudentCourses.CourseId` is a foreign key referencing `Courses.Id`.
+
+### Add Student
+``` json
+{
+  "name": "Student-1"
+}
+```
+### Add Course
+``` json
+{
+  "name": "BA"
+}
+```
+### Add StudentCourse
+``` json
+{
+  "studentId": 2,  
+  "courseId": 2
+}
+```
+### Get Students
+``` json
+[
+  {
+    "id": 1,
+    "name": "Student-1",
+    "studentsCourses": [
+      {
+        "id": 1,
+        "studentId": 1,
+        "student": null,
+        "courseId": 1,
+        "course": null
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Student-2",
+    "studentsCourses": [
+      {
+        "id": 2,
+        "studentId": 2,
+        "student": null,
+        "courseId": 1,
+        "course": null
+      },
+      {
+        "id": 3,
+        "studentId": 2,
+        "student": null,
+        "courseId": 2,
+        "course": null
+      }
+    ]
+  }
+]
+```
+### Get Courses
+``` json
+[
+  {
+    "id": 1,
+    "name": "BA",
+    "studentsCourses": [
+      {
+        "id": 1,
+        "studentId": 1,
+        "student": null,
+        "courseId": 1,
+        "course": null
+      },
+      {
+        "id": 2,
+        "studentId": 2,
+        "student": null,
+        "courseId": 1,
+        "course": null
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "BSC",
+    "studentsCourses": [
+      {
+        "id": 3,
+        "studentId": 2,
+        "student": null,
+        "courseId": 2,
+        "course": null
+      }
+    ]
+  }
+]
+```
+### Get StudentsCourses
+``` json
+[
+  {
+    "id": 1,
+    "studentId": 1,
+    "student": {
+      "id": 1,
+      "name": "Student-1",
+      "studentsCourses": [
+        null
+      ]
+    },
+    "courseId": 1,
+    "course": {
+      "id": 1,
+      "name": "BA",
+      "studentsCourses": [
+        null,
+        {
+          "id": 2,
+          "studentId": 2,
+          "student": {
+            "id": 2,
+            "name": "Student-2",
+            "studentsCourses": [
+              null,
+              {
+                "id": 3,
+                "studentId": 2,
+                "student": null,
+                "courseId": 2,
+                "course": {
+                  "id": 2,
+                  "name": "BSC",
+                  "studentsCourses": [
+                    null
+                  ]
+                }
+              }
+            ]
+          },
+          "courseId": 1,
+          "course": null
+        }
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "studentId": 2,
+    "student": {
+      "id": 2,
+      "name": "Student-2",
+      "studentsCourses": [
+        null,
+        {
+          "id": 3,
+          "studentId": 2,
+          "student": null,
+          "courseId": 2,
+          "course": {
+            "id": 2,
+            "name": "BSC",
+            "studentsCourses": [
+              null
+            ]
+          }
+        }
+      ]
+    },
+    "courseId": 1,
+    "course": {
+      "id": 1,
+      "name": "BA",
+      "studentsCourses": [
+        {
+          "id": 1,
+          "studentId": 1,
+          "student": {
+            "id": 1,
+            "name": "Student-1",
+            "studentsCourses": [
+              null
+            ]
+          },
+          "courseId": 1,
+          "course": null
+        },
+        null
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "studentId": 2,
+    "student": {
+      "id": 2,
+      "name": "Student-2",
+      "studentsCourses": [
+        {
+          "id": 2,
+          "studentId": 2,
+          "student": null,
+          "courseId": 1,
+          "course": {
+            "id": 1,
+            "name": "BA",
+            "studentsCourses": [
+              {
+                "id": 1,
+                "studentId": 1,
+                "student": {
+                  "id": 1,
+                  "name": "Student-1",
+                  "studentsCourses": [
+                    null
+                  ]
+                },
+                "courseId": 1,
+                "course": null
+              },
+              null
+            ]
+          }
+        },
+        null
+      ]
+    },
+    "courseId": 2,
+    "course": {
+      "id": 2,
+      "name": "BSC",
+      "studentsCourses": [
+        null
+      ]
+    }
+  }
+]
+```
