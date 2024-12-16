@@ -8,4 +8,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     // One To One
     public DbSet<User> Users => Set<User>();
     public DbSet<Profile> Profiles => Set<Profile>();
+
+    // One To Many
+    public DbSet<Blog> Blogs => Set<Blog>();
+    public DbSet<Post> Posts => Set<Post>();
 }
